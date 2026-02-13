@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 1113110632282102365}
   - component: {fileID: 4222406641173323007}
   - component: {fileID: 3706715043768968225}
+  - component: {fileID: -5107729730940389540}
   m_Layer: 0
   m_Name: PlayerPrefab
   m_TagString: Untagged
@@ -250,3 +251,16 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &-5107729730940389540
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4623931313234542538}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85e659d39f194ee7bf16cececf7f4d1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInteractions
+  ShowTopMostFoldoutHeaderGroup: 1
