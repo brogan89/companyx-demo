@@ -9,7 +9,7 @@ A small demo showcasing the use of Network For GameObjects as per [requirements]
 
 To run two instances of the built game:
 
-- Double click on `Game.exe` in Builds in folder, and again for second instance.
+- Double click on `CompanyX.exe` in Builds in folder, and again for second instance.
 
 
 ### In Editor
@@ -23,7 +23,7 @@ To run 2 instances of the game from the editor :
 
 ## Video
 
-See video of demonstation [here](https://youtu.be/Lxjg8o5qILg)
+See video of demonstration [here](https://youtu.be/Lxjg8o5qILg)
 
 [![video](https://img.youtube.com/vi/Lxjg8o5qILg/0.jpg)](https://www.youtube.com/watch?v=Lxjg8o5qILg)
 
