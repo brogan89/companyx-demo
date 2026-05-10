@@ -8,7 +8,7 @@ using UnityEngine;
 /// <summary>
 /// Provides functionality to manage game lobbies, including creation and deletion.
 /// </summary>
-public static class LobbyManager
+public static class XFrameRoom
 {
     /// <summary>
     /// Creates a new lobby with the specified name and maximum player count.
@@ -41,7 +41,7 @@ public static class LobbyManager
             
             while (true)
             {
-                await Awaitable.WaitForSecondsAsync(10);
+                await Awaitable.WaitForSecondsAsync(15);
                 await LobbyService.Instance.SendHeartbeatPingAsync(lobby.Id);
             }
         }
