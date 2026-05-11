@@ -1,20 +1,36 @@
 using System;
+using System.Collections.Generic;
 using ImGuiNET;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
+using Vector2 = System.Numerics.Vector2;
 
 public class RoomImGui : ImGuiWindow
 {
 	public override string Name => "Room Manager";
-	private Lobby _lobby;
+	
+	private string _roomNameInput = "Test Room";
+	private string _joinCodeInput = "";
+	
+	private float _currentPollTime;
+	private List<Lobby> _rooms = new();
 
 	protected override void _OnImGui()
 	{
-		if (_lobby is null)
+		if (XFrameRoom.CurrentRoom is null)
 		{
-			if (ImGui.Button("Create Room"))
+			var buttonSize = new Vector2(100, 20);
+			
+			// create
+			ImGui.InputText("Room Name", ref _roomNameInput, 20);
+			if (ImGui.Button("Create Room", buttonSize))
 				CreateRoom();
-			if (ImGui.Button("Join Room"))
+			
+			ImGui.Separator();
+
+			// join
+			ImGui.InputText("Join Code", ref _joinCodeInput, 10);
+			if (ImGui.Button("Join Room", buttonSize))
 				JoinRoom();
 		}
 		else
@@ -23,27 +39,63 @@ public class RoomImGui : ImGuiWindow
 		}
 	}
 
+	private void PollRooms()
+	{
+		if (XFrameRoom.CurrentRoom is not null)
+			return;
+
+		_currentPollTime += Time.deltaTime;
+		if (_currentPollTime < 2f)
+			return;
+
+		_currentPollTime = 0f;
+		UpdateRoomsList();
+	}
+
+	private async void UpdateRoomsList()
+	{
+		try
+		{
+			_rooms = await XFrameRoom.QueryAsync();
+		}
+		catch (Exception e)
+		{
+			Debug.LogException(e);
+		}
+	}
+
 	private void DrawLobbyInfo()
 	{
-		if (_lobby is null)
+		if (XFrameRoom.CurrentRoom is null)
 			return;
 		
-		ImGui.Text($"Lobby ID: {_lobby.Id}");
-		ImGui.Text($"Lobby Name: {_lobby.Name}");
-		ImGui.Text($"Lobby Max Players: {_lobby.MaxPlayers}");
+		ImGui.Text($"Lobby ID: {XFrameRoom.CurrentRoom.Id}");
+		ImGui.Text($"Lobby Name: {XFrameRoom.CurrentRoom.Name}");
+		ImGui.Text($"Join Code: {XFrameRoom.CurrentRoom.LobbyCode}");
 
-		foreach (var player in _lobby.Players)
-		{
-			ImGui.Text($"Player ID: {player.Id}");
-			ImGui.Text($"Player Name: {player.Profile?.Name}");	
-		}
+		ImGui.Separator();
+		ImGui.Text($"Players ({XFrameRoom.CurrentRoom.Players.Count}/{XFrameRoom.CurrentRoom.MaxPlayers}):");
+		foreach (var player in XFrameRoom.CurrentRoom.Players)
+			ImGui.Text($"  Player ID: {player.Id}");
+		
+		ImGui.Separator();
+		if (ImGui.Button("Leave Lobby"))
+			LeaveLobby();
+	}
+
+	private void LeaveLobby()
+	{
+		_ = XFrameRoom.LeaveAsync();
 	}
 
 	private async void CreateRoom()
 	{
 		try
 		{
-			_lobby = await XFrameRoom.CreateAsync("Test Room");
+			if (string.IsNullOrWhiteSpace(_roomNameInput))
+				_roomNameInput = "Test Room";
+			
+			await XFrameRoom.CreateAsync(_roomNameInput);
 		}
 		catch (Exception e)
 		{
@@ -55,7 +107,10 @@ public class RoomImGui : ImGuiWindow
 	{
 		try
 		{
-			_lobby = await XFrameRoom.JoinByIdAsync("");
+			if (string.IsNullOrWhiteSpace(_joinCodeInput))
+				return;
+			
+			await XFrameRoom.JoinByCodeAsync(_joinCodeInput);
 		}
 		catch (Exception e)
 		{
