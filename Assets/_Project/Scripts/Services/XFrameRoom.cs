@@ -134,39 +134,39 @@ public static class XFrameRoom
 	{
 		// TODO: placeholder query method to demonstrate paging. This should be replaced with a more specific query in production code.
 		// Common query options to use for paging
-		var queryOptions = new QueryLobbiesOptions
-		{
-			SampleResults = false, // Paging cannot use randomized results
-			Filters = new List<QueryFilter>
-			{
-				// Only include open lobbies in the pages
-				new(
-					field: QueryFilter.FieldOptions.AvailableSlots,
-					op: QueryFilter.OpOptions.GT,
-					value: "0")
-			},
-			Order = new List<QueryOrder>
-			{
-				// Show the oldest lobbies first
-				new(true, QueryOrder.FieldOptions.Created)
-			}
-		};
+		// var queryOptions = new QueryLobbiesOptions
+		// {
+		// 	SampleResults = false, // Paging cannot use randomized results
+		// 	Filters = new List<QueryFilter>
+		// 	{
+		// 		// Only include open lobbies in the pages
+		// 		new(
+		// 			field: QueryFilter.FieldOptions.AvailableSlots,
+		// 			op: QueryFilter.OpOptions.GT,
+		// 			value: "0")
+		// 	},
+		// 	Order = new List<QueryOrder>
+		// 	{
+		// 		// Show the oldest lobbies first
+		// 		new(true, QueryOrder.FieldOptions.Created)
+		// 	}
+		// };
 
-		var response = await LobbyService.Instance.QueryLobbiesAsync(queryOptions);
+		var response = await LobbyService.Instance.QueryLobbiesAsync(/*queryOptions*/);
 		var lobbies = response.Results;
 
 		// A continuation token will still be returned when the next page is empty,
 		// so continue paging until there are no new lobbies in the response
-		while (lobbies.Count > 0)
-		{
-			// Do something here with the lobbies in the current page
-
-			// Get the next page. Be careful not to modify the filter or order in the
-			// query options, as this will return an error
-			queryOptions.ContinuationToken = response.ContinuationToken;
-			response = await LobbyService.Instance.QueryLobbiesAsync(queryOptions);
-			lobbies = response.Results;
-		}
+		// while (lobbies.Count > 0)
+		// {
+		// 	// Do something here with the lobbies in the current page
+		//
+		// 	// Get the next page. Be careful not to modify the filter or order in the
+		// 	// query options, as this will return an error
+		// 	queryOptions.ContinuationToken = response.ContinuationToken;
+		// 	response = await LobbyService.Instance.QueryLobbiesAsync(queryOptions);
+		// 	lobbies = response.Results;
+		// }
 
 		return lobbies;
 	}

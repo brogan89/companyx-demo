@@ -12,25 +12,34 @@ public class RoomImGui : ImGuiWindow
 	private string _roomNameInput = "Test Room";
 	private string _joinCodeInput = "";
 	
-	private float _currentPollTime;
 	private List<Lobby> _rooms = new();
 
 	protected override void _OnImGui()
 	{
 		if (XFrameRoom.CurrentRoom is null)
 		{
-			var buttonSize = new Vector2(100, 20);
-			
 			// create
 			ImGui.InputText("Room Name", ref _roomNameInput, 20);
-			if (ImGui.Button("Create Room", buttonSize))
+			if (ImGui.Button("Create Room"))
 				CreateRoom();
 			
 			ImGui.Separator();
 
-			// join
+			// join by code
 			ImGui.InputText("Join Code", ref _joinCodeInput, 10);
-			if (ImGui.Button("Join Room", buttonSize))
+			if (ImGui.Button("Join Room"))
+				JoinRoom();
+			
+			// join by id (from list)
+			ImGui.Separator();
+			if (ImGui.Button("Refresh List"))
+				UpdateRoomsList();
+			
+			foreach (var room in _rooms)
+				if (ImGui.Button($"Join Room: {room.Name}"))
+					JoinRoomById(room.Id);
+			
+			if (ImGui.Button("Join Room"))
 				JoinRoom();
 		}
 		else
@@ -39,24 +48,13 @@ public class RoomImGui : ImGuiWindow
 		}
 	}
 
-	private void PollRooms()
-	{
-		if (XFrameRoom.CurrentRoom is not null)
-			return;
-
-		_currentPollTime += Time.deltaTime;
-		if (_currentPollTime < 2f)
-			return;
-
-		_currentPollTime = 0f;
-		UpdateRoomsList();
-	}
-
 	private async void UpdateRoomsList()
 	{
 		try
 		{
+			_rooms.Clear();
 			_rooms = await XFrameRoom.QueryAsync();
+			Debug.Log($"Found {_rooms.Count} rooms");
 		}
 		catch (Exception e)
 		{
@@ -96,6 +94,18 @@ public class RoomImGui : ImGuiWindow
 				_roomNameInput = "Test Room";
 			
 			await XFrameRoom.CreateAsync(_roomNameInput);
+		}
+		catch (Exception e)
+		{
+			Debug.LogException(e);
+		}
+	}
+	
+	private async void JoinRoomById(string roomId)
+	{
+		try
+		{
+			await XFrameRoom.JoinByIdAsync(roomId);
 		}
 		catch (Exception e)
 		{
